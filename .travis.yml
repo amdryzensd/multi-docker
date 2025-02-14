@@ -37,6 +37,7 @@ deploy:
     branch: master
   access_key_id: $AWS_ACCESS_KEY
   secret_access_key: $AWS_SECRET_KEY
+  s3_signature_version: 4
     #secure: 
 
 #password is not here

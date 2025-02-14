@@ -1,0 +1,39 @@
+sudo: required
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - gem install bundler
+  - bundle config set force_ruby_platform true
+  - docker build -t santhoshdurai/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true santhoshdurai/react-test npm test
+
+after_success:
+  - docker build -t santhoshdurai/multi-client ./client
+  - docker build -t santhoshdurai/multi-nginx ./nginx
+  - docker build -t santhoshdurai/multi-server ./server
+  - docker build -t santhoshdurai/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push santhoshdurai/multi-client
+  - docker push santhoshdurai/multi-nginx
+  - docker push santhoshdurai/multi-server
+  - docker push santhoshdurai/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: ap-southeast-2
+  app: multi-docker
+  env: multi-docker-env
+  bucket_name: elasticbeanstalk-ap-southeast-2-982081062263
+  bucket_path: docker-multi
+  on:
+    branch: main
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: 
+    secure: $AWS_SECRET_KEY

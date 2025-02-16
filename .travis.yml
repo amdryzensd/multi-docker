@@ -27,10 +27,10 @@ after_success:
 deploy:
   provider: elasticbeanstalk
   region: ap-southeast-2
-  app: Multi-docker-santhosh
-  env: Multi-docker-santhosh-env
+  app: kiyanzadocker
+  env: Kiyanzadocker-env
   bucket_name: elasticbeanstalk-ap-southeast-2-982081062263
-  bucket_path: docker-multi-santhosh
+  bucket_path: docker-multi-kiyanza
   on:
     branch: master
   access_key_id: $AWS_ACCESS_KEY
